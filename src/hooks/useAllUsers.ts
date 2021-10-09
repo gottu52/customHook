@@ -31,5 +31,5 @@ export const useAllUsers = () => {
         setLoading(false);
       });
   };
-  return {};
+  return { getUsers, error, loading, UserProfiles };
 };
