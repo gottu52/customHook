@@ -8,9 +8,11 @@ import { UserProfileType } from "./types/UserProfileType";
 export default function App() {
   const [UserProfiles, setUserProfiles] = useState<Array<UserProfileType>>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const onClickFetchUser = () => {
-    setLodading(true);
+    setLoading(true);
+    setError(false);
 
     axios
       .get<Array<UserAPI>>("https://jsonplaceholder.typicode.com/users")
@@ -22,15 +24,30 @@ export default function App() {
           email: user.email
         }));
         setUserProfiles(data);
+      })
+      .catch(() => {
+        setError(true);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
   return (
     <div className="App">
       <button onClick={onClickFetchUser}>データ取得</button>
-      {UserProfiles.map((user) => (
-        <UserCard key={user.id} user={user} />
-      ))}
+      <br />
+      {error ? (
+        <p style={{ color: "red" }}>データの取得に失敗しました</p>
+      ) : loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          {UserProfiles.map((user) => (
+            <UserCard key={user.id} user={user} />
+          ))}
+        </>
+      )}
     </div>
   );
 }
